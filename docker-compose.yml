@@ -1,0 +1,24 @@
+services:
+  rate-api:
+    image: tripladev/rate-api
+    ports:
+      - "8080:8080"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+
+  interview-dev:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+    environment:
+      - RATE_API_URL=http://rate-api:8080
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      - rate-api
+      - redis
